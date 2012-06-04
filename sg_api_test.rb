@@ -3,7 +3,8 @@ require 'base64'
 require 'json'
 require 'net/http'
 require 'uri'
-
+CLIENT_ID = '45234'
+CLIENT_PASSWORD = 'pa55w0rd'
 
 MOBILE_USER_AGENTS = 'palm|blackberry|nokia|phone|midp|mobi|symbian|chtml|ericsson|minimo|audiovox|motorola|samsung|telit|upg1|windows ce|ucweb|astel|plucker|x320|x240|j2me|sgh|portable|sprint|docomo|kddi|softbank|android|mmp|pdxgw|netfront|xiino|vodafone|portalmmm|sagem|mot-|sie-|ipod|up\.b|webos|amoi|novarra|cdm|alcatel|pocket|iphone|mobileexplorer|ipad|mobile'
 
@@ -16,7 +17,7 @@ get '/' do
 end
 
 get '/get_session_token' do
-  res = Net::HTTP.get(URI.parse("http://api.stargreetz.com/v1?client_id=45234&password=pa55w0rd"))
+  res = Net::HTTP.get(URI.parse("http://api.stargreetz.com/v1?client_id=#{CLIENT_ID}&password=#{CLIENT_PASSWORD}"))
   return res
 end
 
