@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>Index</title>
+<link rel="stylesheet" href="/css/Index.css" type="text/css" />
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+</head>
+<body>
+	<div id="container">
+		<p>
+		<a href="#" onClick="getSessionKey();">Step 1 - Get Session Key</a><br/>
+		<div class="session_key"></div>
+		</p>
+		<p>
+		<a href="#" onClick="getPreview();">Step 2 - Get Preview</a><br/>
+		<div class="auth_token"></div>
+		</p>
+		<p>
+		<a href="#" onClick="confirmPurchase();">Step 3 - Order for $10.99</a></br>
+		<div class="confirm_purchase"></div>
+		</p>
+	</div>
+</body>
+
+<script type="text/javascript" charset="utf-8">
+	function getSessionKey(){
+		$.ajax({
+		   url: "/get_session_token",
+		   dataTypeString: "json",
+		   beforeSend: function (xhr) {
+		                   xhr.setRequestHeader("Accept", "text/json, application/json, */*");
+		   },
+		   data: "",
+		   complete: function(response, status){
+		       console.log(status)
+		       console.log(response.responseText)
+					 SK = JSON.parse(response.responseText);
+					console.log(SK['session_key'])
+					 $('div.session_key').html(SK['session_key'])
+		   }
+		});
+	}
+	
+	function getPreview(){
+		$.ajax({
+		   url: "/preview",
+		   dataTypeString: "json",
+		   beforeSend: function (xhr) {
+		                   xhr.setRequestHeader("Accept", "text/json, application/json, */*");
+		   },
+		   data: {session_key:SK['session_key']},
+		   complete: function(response, status){
+		       console.log(status)
+					 console.log(response)
+		       console.log(response.responseText)
+					MEDIA_AUTHORIZATION_TOKEN = JSON.parse(response.responseText)[1]['media_authorization_token']
+					$('.auth_token').html(MEDIA_AUTHORIZATION_TOKEN)
+		   }
+		});
+	}
+	
+	function confirmPurchase(){
+		var myOrders = [{'recipient':'nelson@stargreetz.com', 'auth_token':MEDIA_AUTHORIZATION_TOKEN}]
+		$.ajax({
+			url: "/confirm_purchase",
+			dataTypeString: "json",
+			beforeSend: function (xhr) {
+							xhr.setRequestHeader("Accept", "text/json, application/json, */*");
+			},
+			data: { session_key: SK['session_key'], 
+				partner_order_id: 'dummy_order_from_api',
+				'orders': JSON.stringify(myOrders),
+				price: '1099' },
+			complete: function(response, status){
+			console.log(status)
+			console.log(response)
+		  console.log(response.responseText)
+			$('.confirm_purchase').html(response.responseText)
+				// response will look lik {'order_id':'stargreetz_order_id'}
+			}
+		 });
+	}
+</script>
+</html>
